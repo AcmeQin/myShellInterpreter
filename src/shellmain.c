@@ -10,7 +10,8 @@
 
 int main(int argc, char *argv[]) {
   char pipeName[PIPE_NAME_LEN];
-  char *buf=NULL;
+  char buf[MAX];
+  char _exit[]="exit";
   int bytesread;
   size_t len = 0;
   ssize_t read;
@@ -20,9 +21,13 @@ int main(int argc, char *argv[]) {
   printf("pipeName: %s\n", pipeName);
 
   FILE *fd = fopen( pipeName, "r" );
-
-  while ((read = getline(&buf, &len, fd)) != -1) {
-    printf("%s\n", buf);
+  while (1) {
+    while (fgets(buf,MAX,fd)!=NULL) {
+      buf[strcspn(buf,"\n")]=0;
+      printf("%s\n", buf);
+    }
+    if (strcmp(buf,"exit")==0)
+      break;
   }
 
   fclose(fd);
