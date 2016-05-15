@@ -12,8 +12,6 @@
 #define MAX 1024
 #define PIPE_NAME_LEN 100
 
-
-
 regex_t regex;
 int reti;
 char dir[MAX];
@@ -38,8 +36,8 @@ int main(int argc, char *argv[]) {
   // Get pipe name, connect pipe
   printf("Please enter pipe name. \n");
   // for test
-  // scanf("%s",pipeName);
-  pipeName = "testpipe";
+  scanf("%s",pipeName);
+  // pipeName = "testpipe";
   printf("pipeName: %s\n", pipeName);
   FILE *fd = fopen( pipeName, "r" );
 
@@ -59,10 +57,9 @@ int main(int argc, char *argv[]) {
         if(child_pid!=0){
           waitpid(-1,&status,0);
         }else{
-
           char * rawArgs;
           Args[0]="/bin/ls";
-          rawArgs=strtok(cmd," ");
+          rawArgs=strtok(buf," ");
 
           rawArgs=strtok(NULL," ");
           char temp1[PIPE_NAME_LEN];
@@ -73,14 +70,9 @@ int main(int argc, char *argv[]) {
           char temp2[PIPE_NAME_LEN];
           strcpy(temp2,rawArgs);
           Args[2]=temp2;
-
-          printf("%s\n", Args[1]);
-          printf("%s\n", Args[2]);
-
           execv(Args[0],Args);
           exit(0);
         }
-
       }else{
         innerExecute(buf);
       }
@@ -89,15 +81,13 @@ int main(int argc, char *argv[]) {
     if (strcmp(buf,"exit")==0)
       break;
   }
-
   fclose(fd);
   regfree(&regex);
   return 0;
 }
 
 
-// This method determine the type of command and
-// initialize arguments for outer commands
+// This method determine the type of command
 int isExternal(char *cmd){
   // Compile regular expression
   reti = regcomp(&regex,"^ls[ ].*$",0);
@@ -107,14 +97,6 @@ int isExternal(char *cmd){
   }
   reti = regexec(&regex, cmd, 0, NULL, 0);
   if (!reti) {
-
-
-
-
-    // Args[1]="rawArgs";
-    // rawArgs=strtok(NULL," ");
-    // printf("%s\n", rawArgs);
-    // strcpy(Args[2],rawArgs);
     return 1;
   }
   else if (reti == REG_NOMATCH) {
@@ -124,7 +106,6 @@ int isExternal(char *cmd){
     fprintf(stderr, "Regex match failed: %s\n", cmd);
     exit(1);
   }
-
   return 0;
 }
 
