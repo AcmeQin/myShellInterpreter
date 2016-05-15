@@ -59,6 +59,21 @@ int main(int argc, char *argv[]) {
         if(child_pid!=0){
           waitpid(-1,&status,0);
         }else{
+
+          char * rawArgs;
+          Args[0]="/bin/ls";
+          rawArgs=strtok(cmd," ");
+
+          rawArgs=strtok(NULL," ");
+          char temp1[PIPE_NAME_LEN];
+          strcpy(temp1,rawArgs);
+          Args[1]=temp1;
+
+          rawArgs=strtok(NULL," ");
+          char temp2[PIPE_NAME_LEN];
+          strcpy(temp2,rawArgs);
+          Args[2]=temp2;
+
           printf("%s\n", Args[1]);
           printf("%s\n", Args[2]);
 
@@ -92,21 +107,9 @@ int isExternal(char *cmd){
   }
   reti = regexec(&regex, cmd, 0, NULL, 0);
   if (!reti) {
-    char * rawArgs;
-    Args[0]="/bin/ls";
-    rawArgs=strtok(cmd," ");
 
-    rawArgs=strtok(NULL," ");
-    char temp1[PIPE_NAME_LEN];
-    strcpy(temp1,rawArgs);
-    Args[1]=temp1;
-    printf("%s\n", Args[1]);
 
-    rawArgs=strtok(NULL," ");
-    char temp2[PIPE_NAME_LEN];
-    strcpy(temp2,rawArgs);
-    Args[2]=temp2;
-    printf("%s\n", Args[2]);
+
 
     // Args[1]="rawArgs";
     // rawArgs=strtok(NULL," ");
